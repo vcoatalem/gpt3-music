@@ -1,9 +1,12 @@
 import pygame.mixer
 import pygame.midi
 
+from random import randrange
 import time
 
 from midiutil import MIDIFile
+from pychord import find_chords_from_notes
+
 
 def NoteToMidi(KeyOctave):
 
@@ -27,7 +30,11 @@ def NoteToMidi(KeyOctave):
     answer += pos + 12 * (int(octave) + 1) + 1
     return answer
 
-def create_midi_file(chords_components, filename_output="out.mid"):
+
+def create_output_filename(chords):
+    return "-".join(list(map(lambda chord: chord.root + str(chord.quality), chords))) + ".mid"
+
+def create_midi_file(chords_components, filename_output):
 
     track    = 0
     channel  = 0
@@ -45,7 +52,8 @@ def create_midi_file(chords_components, filename_output="out.mid"):
         degrees = list(map(lambda note: NoteToMidi(note), chord))
         print(degrees)
         for degree in degrees:
-            MyMIDI.addNote(track, channel, degree, time + i * time_unit, duration, volume)
+            velocity = volume + randrange(-5, 5)
+            MyMIDI.addNote(track, channel, degree, time + i * time_unit, duration, velocity)
 
     with open(filename_output, "wb") as output_file:
         MyMIDI.writeFile(output_file)
