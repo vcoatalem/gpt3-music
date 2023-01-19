@@ -1,3 +1,4 @@
 openai
 pychord
 MIDIUtil
+pygame
